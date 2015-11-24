@@ -6,9 +6,9 @@ $(function() {
 		//undo redo
 		var history = new Array();
 		var cStep = -1;
-		
+
 		var dragCanvas;
-		
+
 		// simulate line rectangle input dialog when you interact with the UI
 		var lineTip = $("#container").appendLine({
 			width: "1px",
@@ -24,7 +24,9 @@ $(function() {
 		$("#container").append(rectTip);
 		$("#container").append(fontTip);
 
-
+		function test(){
+			alert("test");
+		}
 
 		var flag = false;
 		var ctx = document.getElementById("myCanvas").getContext("2d");
@@ -186,7 +188,6 @@ $(function() {
 				});
 				rectTip.width(endX - x - borderWidth * 2);
 				rectTip.height(endY - y - borderWidth * 2);
-				console.log(flag);
 			}
 		}
 
@@ -253,7 +254,7 @@ $(function() {
 			var offset = $("#myCanvas").offset();
 			x = e.pageX - offset.left;
 			y = e.pageY - offset.top;
-			//console.log("begin:"+x+" "+y);
+//			console.log("begin:"+x+" "+y);
 
 			switch (command) {
 				case 1:
@@ -339,6 +340,7 @@ $(function() {
 			var offset = $("#myCanvas").offset();
 			ctx.moveTo(x, y);
 			ctx.lineTo(endX, endY);
+//			console.log("end:"+endX+" "+endY);
 			ctx.stroke();
 		}
 
@@ -358,53 +360,50 @@ $(function() {
 		 * function: 	Draw Words
 		 */
 		function drawWords(e) {
-			var words = fontTip.val().trim();
-			if (fontTip.css("display") != "none" && words) {
-				ctx.strokeStyle = "#" + $("#colorpicker-popup").val();
-				ctx.fillStyle = "#" + $("#colorpicker-popup2").val();
-				var offset = $("#myCanvas").offset();
-				var offset2 = fontTip.offset();
-				var fontSize = $("#fontSize").val();
-				fontSize = fontSize.substring(0, fontSize.length - 2);
-				//ctx.fillText(words, offset2.left - offset.left, (offset2.top - offset.top + fontSize * 1));
-				formatText(words, ctx, offset2.left-offset.left, offset2.top-offset.top+fontSize*1,fontSize,fontTip.width());
-				fontTip.val("");
+				var words = fontTip.val().trim();
+				if (fontTip.css("display") != "none" && words) {
+					ctx.strokeStyle = "#" + $("#colorpicker-popup").val();
+					ctx.fillStyle = "#" + $("#colorpicker-popup2").val();
+					var offset = $("#myCanvas").offset();
+					var offset2 = fontTip.offset();
+					var fontSize = $("#fontSize").val();
+					fontSize = fontSize.substring(0, fontSize.length - 2);
+					//ctx.fillText(words, offset2.left - offset.left, (offset2.top - offset.top + fontSize * 1));
+					formatText(words, ctx, offset2.left - offset.left, offset2.top - offset.top + fontSize * 1, fontSize, fontTip.width());
+					fontTip.val("");
+				}
+				fontTip.hide();
 			}
-			fontTip.hide();
-		}
-		//格式化字符串，自动换行
-		function formatText(longtext,cxt,begin_width,begin_height,fontSize,fontW)
-		{ 
-			  var linelenght = parseInt(fontW/fontSize);
-			  var text = "";
-			  var count = 0;
-			  var begin_width = begin_width;
-			  var begin_height = begin_height;
-			  var stringLenght = longtext.length;
-			  var newtext = longtext.split("");
-			  var context = cxt;
-			  context.textAlign = 'left';
-			  
-			  for(i = 0; i <= stringLenght ; i++)
-			  {
-			    
-			    if(count == linelenght)
-				{
-				context.fillText(text,begin_width,begin_height);
-				begin_height = begin_height + 25;
-				text = "";
-				count = 0;
+			//格式化字符串，自动换行
+
+		function formatText(longtext, cxt, begin_width, begin_height, fontSize, fontW) {
+			var linelenght = parseInt(fontW / fontSize);
+			var text = "";
+			var count = 0;
+			var begin_width = begin_width;
+			var begin_height = begin_height;
+			var stringLenght = longtext.length;
+			var newtext = longtext.split("");
+			var context = cxt;
+			context.textAlign = 'left';
+
+			for (i = 0; i <= stringLenght; i++) {
+
+				if (count == linelenght) {
+					context.fillText(text, begin_width, begin_height);
+					begin_height = begin_height + 25;
+					text = "";
+					count = 0;
 				}
-				if(i == stringLenght)
-				{
-				context.fillText(text,begin_width,begin_height);
+				if (i == stringLenght) {
+					context.fillText(text, begin_width, begin_height);
 				}
-			    var text = text + newtext[0];
-				count ++;
-				newtext.shift();	
-			  }
+				var text = text + newtext[0];
+				count++;
+				newtext.shift();
+			}
 		}
-	
+
 		/**
 		 * function: undo
 		 */
@@ -466,8 +465,8 @@ $(function() {
 
 			//2. canvas 被拖动，重新设置画板大小（因为拖动是css效果，而实际画板大小是width 和height属性）	
 			$("#myCanvas").resizable({
-				start:function(){
-				 dragCanvas = $("#myCanvas").get(0).toDataURL();
+				start: function() {
+					dragCanvas = $("#myCanvas").get(0).toDataURL();
 				},
 				resize: function(event) {
 					var height = $("#myCanvas").height();
@@ -665,8 +664,10 @@ $(function() {
 			//locally save
 			window.location.href = image;
 		}
-
-
+		$("#download").bind("click",function(){
+			$("#downloadImage_a")[0].href=$("#myCanvas").get(0).toDataURL();
+			$("#downloadImage_a").click();
+		})
 
 		/**
 		 * put current canvas to cache
